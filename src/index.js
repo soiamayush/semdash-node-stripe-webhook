@@ -41,7 +41,7 @@ console.log({
 // Plan map for subscriptions
 const planMap = {
   // price_1QdZAXIvZBeqKnwPvCm2ZyMz
-  price_1QdFN7IvZBeqKnwP0Hs7sIoI: { name: "gold", credits: 3000 },
+  price_1QdZAXIvZBeqKnwPvCm2ZyMz: { name: "gold", credits: 3000 },
   price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
   price_1QdZAeIvZBeqKnwP9vmmaAkW: { name: "elite", credits: 500000 },
 };
