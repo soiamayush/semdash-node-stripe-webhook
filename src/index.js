@@ -13,26 +13,35 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const app = express();
+const cleanEnvVar = (value) => value?.replace(/\r/g, '').trim();
 
+const STRIPE_SECRET_KEY = cleanEnvVar(process.env.STRIPE_SECRET_KEY);
+const STRIPE_WEBHOOK_SECRET = cleanEnvVar(process.env.STRIPE_WEBHOOK_SECRET);
+const SUPABASE_URL = cleanEnvVar(process.env.SUPABASE_URL);
+const SUPABASE_ANON_KEY = cleanEnvVar(process.env.SUPABASE_ANON_KEY);
 // Initialize Stripe and Supabase
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
 );
+
+// Clean all environment variables
+
 console.log({
-  supabase_url :   process.env.SUPABASE_URL,
-  supabase_anon : process.env.SUPABASE_ANON_KEY,
+  supabase_url :   SUPABASE_URL,
+  supabase_anon : SUPABASE_ANON_KEY,
   SUPABASE_SERVICE_ROLE_KEY : process.env.SUPABASE_SERVICE_ROLE_KEY,
   STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-  STRIPE_WEBHOOK_SECRET : process.env.STRIPE_WEBHOOK_SECRET
+  STRIPE_SECRET_KEY: STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET : STRIPE_WEBHOOK_SECRET
 })
+
 
 // Plan map for subscriptions
 const planMap = {
   // price_1QdZAXIvZBeqKnwPvCm2ZyMz
-  price_1QdFN7IvZBeqKnwP0Hs7sIoI: { name: "gold", credits: 2000 },
+  price_1QdFN7IvZBeqKnwP0Hs7sIoI: { name: "gold", credits: 3000 },
   price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
   price_1QdZAeIvZBeqKnwP9vmmaAkW: { name: "elite", credits: 500000 },
 };
@@ -50,7 +59,7 @@ app.post(
       stripeEvent = stripe.webhooks.constructEvent(
         request.body,
         sig,
-        process.env.STRIPE_WEBHOOK_SECRET
+        STRIPE_WEBHOOK_SECRET
       );
 
       console.log("Received Stripe webhook event:", stripeEvent.type);
