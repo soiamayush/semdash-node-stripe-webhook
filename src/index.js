@@ -43,8 +43,7 @@ const planMap = {
   // price_1QdZAXIvZBeqKnwPvCm2ZyMz
   price_1QdZAXIvZBeqKnwPvCm2ZyMz: { name: "gold", credits: 1000 },
   price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
-  // price_1QdZAeIvZBeqKnwP9vmmaAkW
-  price_1QdFOtIvZBeqKnwPdV9MS7cq : { name: "elite", credits: 500000 },
+  price_1QdZAeIvZBeqKnwP9vmmaAkW : { name: "elite", credits: 500000 },
 };
 
 // Middleware for raw body parsing for Stripe webhooks
