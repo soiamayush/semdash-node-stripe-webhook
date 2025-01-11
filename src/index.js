@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const app = express();
-const cleanEnvVar = (value) => value?.replace(/\r/g, '').trim();
+const cleanEnvVar = (value) => value?.replace(/\r/g, "").trim();
 
 const STRIPE_SECRET_KEY = cleanEnvVar(process.env.STRIPE_SECRET_KEY);
 const STRIPE_WEBHOOK_SECRET = cleanEnvVar(process.env.STRIPE_WEBHOOK_SECRET);
@@ -21,29 +21,26 @@ const SUPABASE_URL = cleanEnvVar(process.env.SUPABASE_URL);
 const SUPABASE_ANON_KEY = cleanEnvVar(process.env.SUPABASE_ANON_KEY);
 // Initialize Stripe and Supabase
 const stripe = new Stripe(STRIPE_SECRET_KEY);
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Clean all environment variables
 
 console.log({
-  supabase_url :   SUPABASE_URL,
-  supabase_anon : SUPABASE_ANON_KEY,
-  SUPABASE_SERVICE_ROLE_KEY : process.env.SUPABASE_SERVICE_ROLE_KEY,
+  supabase_url: SUPABASE_URL,
+  supabase_anon: SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
   STRIPE_SECRET_KEY: STRIPE_SECRET_KEY,
-  STRIPE_WEBHOOK_SECRET : STRIPE_WEBHOOK_SECRET
-})
-
+  STRIPE_WEBHOOK_SECRET: STRIPE_WEBHOOK_SECRET,
+});
 
 // Plan map for subscriptions
 const planMap = {
   // price_1QdZAXIvZBeqKnwPvCm2ZyMz
+  price_1Qg2UUIvZBeqKnwPGdFVvhJJ: { name: "starter", credits: 50 },
   price_1QdZAXIvZBeqKnwPvCm2ZyMz: { name: "gold", credits: 1000 },
   price_1QdZAbIvZBeqKnwPP6Fv2zK1: { name: "diamond", credits: 100000 },
-  price_1QdZAeIvZBeqKnwP9vmmaAkW : { name: "elite", credits: 500000 },
+  price_1QdZAeIvZBeqKnwP9vmmaAkW: { name: "elite", credits: 500000 },
 };
 
 // Middleware for raw body parsing for Stripe webhooks
@@ -67,9 +64,14 @@ app.post(
       switch (stripeEvent.type) {
         case "checkout.session.completed": {
           const session = stripeEvent.data.object;
-          const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+          const lineItems = await stripe.checkout.sessions.listLineItems(
+            session.id
+          );
           const priceId = lineItems.data[0]?.price?.id;
-          const plan = planMap[priceId || ""] || { name: "free", credits: 1000 };
+          const plan = planMap[priceId || ""] || {
+            name: "free",
+            credits: 1000,
+          };
 
           if (!session?.customer_details?.email) {
             throw new Error("Customer email is missing");
@@ -120,7 +122,10 @@ app.post(
         case "customer.subscription.updated": {
           const subscription = stripeEvent.data.object;
           const priceId = subscription.items.data[0]?.price.id;
-          const plan = planMap[priceId || ""] || { name: "free", credits: 1000 };
+          const plan = planMap[priceId || ""] || {
+            name: "free",
+            credits: 1000,
+          };
 
           const { data, error } = await supabase
             .from("users")
